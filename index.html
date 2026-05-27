@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Figeac Aéro - Dashboard 6S</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#f5f5f4;font-family:'Segoe UI',Tahoma,sans-serif;color:#1f2937;min-height:100vh}
+.header{background:white;border-bottom:1px solid #e5e7eb;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.logo{background:#111827;color:#f59e0b;font-weight:700;font-size:14px;padding:8px 12px;border-radius:10px;letter-spacing:1px}
+.company-name{font-weight:700;font-size:16px}
+.company-tag{font-size:11px;color:#6b7280;margin-top:2px}
+.badge{font-size:11px;padding:6px 12px;border-radius:30px;background:#f3f4f6;border:1px solid #e5e7eb;color:#6b7280}
+.body{padding:24px;max-width:1300px;margin:auto}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px}
+.kpi{background:white;border:1px solid #e5e7eb;border-radius:18px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.kpi-val{font-size:30px;font-weight:700;margin-bottom:4px}
+.kpi-lbl{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#6b7280}
+.kpi-sub{font-size:11px;color:#9ca3af;margin-top:6px}
+.sec{font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;color:#111827}
+.zones-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:22px}
+.zone-card{background:white;border:1px solid #e5e7eb;border-radius:20px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.04);transition:.2s;border-top:4px solid #e5e7eb}
+.zone-card:hover{transform:translateY(-2px)}
+.zone-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.zone-name{font-size:17px;font-weight:700}
+.zone-sub{font-size:12px;color:#6b7280;margin-top:3px}
+.grade-badge{font-size:13px;font-weight:700;padding:5px 12px;border-radius:12px}
+.ring-row{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.s-bars{flex:1}
+.s-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.s-bar-track{flex:1;height:6px;background:#f3f4f6;border-radius:10px;overflow:hidden}
+.s-bar-fill{height:100%;border-radius:10px}
+.s-bar-val{font-size:11px;color:#6b7280;min-width:18px;text-align:right}
+.zone-status{font-size:11px;padding:8px 10px;border-radius:12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.zone-date{font-size:11px;color:#9ca3af;margin-bottom:10px}
+.btn-row{display:flex;gap:10px}
+.btn{flex:1;padding:10px;border-radius:12px;border:1px solid #e5e7eb;background:#f9fafb;font-size:12px;font-weight:600;cursor:pointer}
+.btn-primary{background:#111827;color:white;border:none}
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.card{background:white;border:1px solid #e5e7eb;border-radius:20px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.chart-title{font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#6b7280;margin-bottom:14px}
+.actions-table{background:white;border:1px solid #d1d5db;border-radius:18px;overflow:hidden}
+.at-head{display:grid;grid-template-columns:1fr .5fr .9fr 1.8fr;padding:14px 20px;background:#fafaf9;border-bottom:1px solid #d1d5db}
+.at-head span{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#111827}
+.at-row{display:grid;grid-template-columns:1fr .5fr .9fr 1.8fr;padding:16px 20px;border-bottom:1px solid #e5e7eb;align-items:center;cursor:pointer}
+.at-row:last-child{border-bottom:none}
+.at-row:hover{background:#fafafa}
+.audit-wrap,.detail-wrap{max-width:900px;margin:auto;padding:24px}
+.top-bar,.hero-card,.s-card,.s6-tile{background:white;border:1px solid #e5e7eb;border-radius:18px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.top-bar{padding:14px 18px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.back-btn{background:#f3f4f6;border:1px solid #e5e7eb;padding:8px 14px;border-radius:10px;cursor:pointer}
+.live-pill{font-size:11px;padding:5px 12px;border-radius:20px;border:1px solid}
+.s-card{padding:16px;margin-bottom:12px}
+.s-card-top{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.s-label{font-weight:600;font-size:14px}
+.s-desc{font-size:11px;color:#6b7280}
+.s-score-val{font-size:24px;font-weight:700}
+.s-track{height:6px;background:#f3f4f6;border-radius:10px;overflow:hidden;margin:10px 0}
+.s-fill{height:100%;border-radius:10px}
+.score-btns{display:flex;justify-content:space-between;gap:4px}
+.score-btn{flex:1;height:32px;border-radius:8px;border:1px solid #e5e7eb;background:white;cursor:pointer;font-weight:600;font-size:11px;transition:.1s}
+.recap-box{background:white;border:1px solid #e5e7eb;border-radius:18px;padding:16px;display:flex;align-items:center;gap:16px;margin:16px 0}
+.submit-btn{width:100%;padding:14px;border:none;border-radius:16px;font-size:14px;font-weight:700;cursor:pointer;color:white;transition:.2s}
+.hero-card{padding:18px;margin:16px 0;display:flex;justify-content:space-between;align-items:center;border-top:4px solid #e5e7eb}
+.s6-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px}
+.s6-tile{padding:16px;text-align:center;border-top:4px solid #e5e7eb}
+.action-item{border-left:4px solid;padding:12px 14px;margin-bottom:10px;background:#fafafa;border-radius:0 12px 12px 0}
+.progress-bar-wrap{background:#f3f4f6;border-radius:10px;height:8px;overflow:hidden;margin-top:8px}
+.progress-bar-fill{height:100%;border-radius:10px}
+.success-screen{text-align:center;padding:40px 20px;background:white;border-radius:20px;box-shadow:0 4px 12px rgba(0,0,0,.05)}
+.loading-screen{text-align:center;padding:100px 20px;font-size:18px;color:#6b7280;font-weight:600}
+@media(max-width:1000px){.kpi-grid,.zones-grid,.charts-grid,.s6-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div class="loading-screen">Connexion à la base de données Firebase en cours...</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+<script>
+const CURRENT_YEAR = 2026;
+
+const firebaseConfig = {
+  databaseURL: "https://fir-tn-a07fb-default-rtdb.firebaseio.com/"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+const S6=[
+  {key:"sort",     label:"1S · Tri",      icon:"⚡", desc:"Éliminer le superflu",       fix_low:"Effectuer un tri complet de la zone.",      fix_mid:"Retirer les éléments inutilisés."},
+  {key:"set",      label:"2S · Rangement", icon:"📐", desc:"Une place pour chaque chose", fix_low:"Redéfinir et baliser chaque emplacement.",   fix_mid:"Améliorer le marquage des zones."},
+  {key:"shine",    label:"3S · Propreté",  icon:"✨", desc:"Nettoyer et inspecter",       fix_low:"Nettoyage complet immédiat de la zone.",     fix_mid:"Planifier un nettoyage regulier."},
+  {key:"standard", label:"4S · Standard",  icon:"📋", desc:"Formaliser les règles",       fix_low:"Créer et afficher les standards visuels.",   fix_mid:"Mettre à jour les standards existants."},
+  {key:"sustain",  label:"5S · Maintien",  icon:"🔄", desc:"Respecter et améliorer",      fix_low:"Former l'équipe et planifier des audits.",   fix_mid:"Renforcer et augmenter la fréquence."},
+  {key:"safety",   label:"6S · Sécurité",  icon:"🛡️", desc:"Prévenir les risques",        fix_low:"Audit sécurité obligatoire — signaler HSE.", fix_mid:"Vérifier signalétique et extincteurs."},
+];
+
+const ZONES=[
+  {id:"A1",name:"Zone A1",team:"Équipe Alpha",atelier:"Atelier 1"},
+  {id:"A2",name:"Zone A2",team:"Équipe Alpha",atelier:"Atelier 1"},
+  {id:"B1",name:"Zone B1",team:"Équipe Bêta", atelier:"Atelier 1"},
+  {id:"B2",name:"Zone B2",team:"Équipe Bêta", atelier:"Atelier 2"},
+  {id:"C1",name:"Zone C1",team:"Équipe Gamma",atelier:"Atelier 2"},
+  {id:"C2",name:"Zone C2",team:"Équipe Gamma",atelier:"Atelier 2"},
+];
+
+let zoneData={};        
+let zoneHistory={};     
+let zoneAuditedYear={}; 
+let annualCycles=0;
+let pendingRound=new Set(ZONES.map(z=>z.id)); 
+
+// --- DECOUPAGE INITIAL DE L'URL ---
+const urlParams = new URLSearchParams(window.location.search);
+const zoneParam = urlParams.get('zone'); 
+
+let view = "dash";
+let activeId = null;
+let auditScores = {};
+let auditDone = false;
+
+if (zoneParam && ZONES.some(z => z.id === zoneParam)) {
+  view = "audit";
+  activeId = zoneParam;
+}
+
+let globalBarChart=null;
+let globalLineChart=null;
+let detailLineChart=null;
+
+ZONES.forEach(z=>{
+  zoneData[z.id]=null;
+  zoneHistory[z.id]=[];
+  zoneAuditedYear[z.id]=null;
+});
+
+// ÉCOUTE FIREBASE
+db.ref('6s_dashboard_central').on('value', (snapshot) => {
+  const store = snapshot.val();
+  if (store) {
+    zoneData = store.zoneData || {};
+    zoneHistory = store.zoneHistory || {};
+    annualCycles = store.annualCycles || 0;
+    zoneAuditedYear = store.zoneAuditedYear || {};
+    
+    ZONES.forEach(z => {
+      if (!zoneData[z.id]) zoneData[z.id] = null;
+      if (!zoneHistory[z.id]) zoneHistory[z.id] = [];
+      if (!zoneAuditedYear[z.id]) zoneAuditedYear[z.id] = null;
+    });
+    
+    if (store.pendingRoundList) {
+      pendingRound = new Set(store.pendingRoundList);
+    } else {
+      pendingRound = new Set(ZONES.map(z=>z.id));
+    }
+  }
+
+  // Initialisation des scores si on est en mode audit
+  if (view === "audit" && activeId && Object.keys(auditScores).length === 0) {
+    const existing = zoneData[activeId];
+    auditScores = existing ? {...existing} : {};
+    S6.forEach(s => { if(auditScores[s.key] === undefined) auditScores[s.key] = 0; });
+  }
+
+  // Router interne sans rechargement de page
+  renderCurrentView();
+});
+
+function renderCurrentView() {
+  if (view === "audit") {
+    renderAudit();
+  } else if (view === "detail") {
+    renderDetail();
+  } else {
+    renderDash();
+  }
+}
+
+function calcPct(scores){
+  if(!scores) return 0;
+  return Math.round((S6.reduce((s,x)=>s+(scores[x.key]||0),0)/60)*100);
+}
+
+function getGrade(p){
+  if(p>85) return {label:"A",color:"#22d3a0",bg:"rgba(34,211,160,.1)",text:"Conforme"};
+  if(p>=70) return {label:"B",color:"#f59e0b",bg:"rgba(245,158,11,.1)",text:"Acceptable"};
+  return {label:"C",color:"#ef4444",bg:"rgba(239,68,68,.1)",text:"Critique"};
+}
+
+function getActions(scores){
+  if(!scores) return [{label:"Aucun audit",msg:"Lancer un premier audit pour cette zone.",score:0,color:"#6b7280"}];
+  const list=[];
+  S6.forEach(s=>{
+    const v=scores[s.key]||0;
+    if(v<=3) list.push({label:s.label,msg:s.fix_low,score:v,color:"#ef4444"});
+    else if(v<=6) list.push({label:s.label,msg:s.fix_mid,score:v,color:"#f59e0b"});
+  });
+  if(list.length===0) list.push({label:"Global",msg:"Zone conforme — maintenir les bonnes pratiques.",score:10,color:"#22d3a0"});
+  return list;
+}
+
+function fmtDate(ts){
+  if(!ts) return "—";
+  return new Date(ts).toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit",year:"numeric"});
+}
+
+function zonesAuditedThisYear(){
+  return ZONES.filter(z=>zoneAuditedYear[z.id]===CURRENT_YEAR).length;
+}
+
+function ringPath(pct,color,size=72){
+  const r=size/2-5;
+  const circ=2*Math.PI*r;
+  const dash=(pct/100*circ).toFixed(1);
+  const cx=size/2,cy=size/2;
+  return `<svg width="${size}" height="${size}" style="transform:rotate(-90deg)">
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#f3f4f6" stroke-width="6"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="6"
+      stroke-dasharray="${dash} ${circ}" stroke-linecap="round"/>
+    <text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="central"
+      style="transform:rotate(90deg);transform-origin:${cx}px ${cy}px;font-size:12px;font-weight:700;fill:${color};font-family:sans-serif">${pct}%</text>
+  </svg>`;
+}
+
+function renderDash(){
+  const audited=ZONES.filter(z=>zoneData[z.id]!==null);
+  const avg=audited.length? Math.round(audited.reduce((a,z)=>a+calcPct(zoneData[z.id]),0)/audited.length):0;
+  const excellent=audited.filter(z=>calcPct(zoneData[z.id])>85).length;
+  const critical=audited.filter(z=>calcPct(zoneData[z.id])<70).length;
+  const auditedCount=zonesAuditedThisYear();
+  const totalZones=ZONES.length;
+
+  const kpis=[
+    {label:"Score moyen",     val:audited.length?`${avg}%`:"—",  color:audited.length?getGrade(avg).color:"#6b7280", sub:"Zones auditées"},
+    {label:"Zones conformes", val:`${excellent}`,                 color:"#22d3a0",                                   sub:`Sur ${totalZones} zones`},
+    {label:"Zones critiques", val:`${critical}`,                  color:critical?"#ef4444":"#6b7280",                sub:"Score < 70%"},
+    {label:"Cycles annuels",  val:`${annualCycles}`,              color:"#f59e0b",                                   sub:`${auditedCount}/${totalZones} zones`},
+  ];
+
+  const zonesHtml=ZONES.map(z=>{
+    const sc=zoneData[z.id];
+    const p=calcPct(sc);
+    const g=sc?getGrade(p):{label:"—",color:"#e5e7eb",bg:"#f3f4f6",text:"En attente"};
+    const lastDate=zoneHistory[z.id].length?fmtDate(zoneHistory[z.id][zoneHistory[z.id].length-1].date):"Aucun audit";
+    const barsHtml=S6.map(s=>{
+      const v=sc?(sc[s.key]||0):0;
+      const col=v>=8?"#22d3a0":v>=5?"#f59e0b":"#ef4444";
+      return `<div class="s-bar-row">
+        <span style="font-size:12px">${s.icon}</span>
+        <div class="s-bar-track"><div class="s-bar-fill" style="width:${v*10}%;background:${col}"></div></div>
+        <span class="s-bar-val">${sc?v:"—"}</span>
+      </div>`;
+    }).join("");
+    const statusText=!sc?"En attente":p>85?"Conforme":p>=70?"À améliorer":"Action urgente";
+    const inPending=pendingRound.has(z.id);
+    const pendingDot=inPending?`<span style="width:7px;height:7px;border-radius:50%;background:#f59e0b;display:inline-block;margin-right:6px;vertical-align:middle"></span>`:"";
+    return `<div class="zone-card" style="border-top-color:${g.color}">
+      <div class="zone-top">
+        <div>
+          <div class="zone-name">${pendingDot}${z.name}</div>
+          <div class="zone-sub">${z.team} · ${z.atelier}</div>
+        </div>
+        <div class="grade-badge" style="color:${g.color};background:${g.bg}">${g.label}</div>
+      </div>
+      <div class="ring-row">
+        ${ringPath(p,g.color,68)}
+        <div class="s-bars">${barsHtml}</div>
+      </div>
+      <div class="zone-date">Dernier audit : ${lastDate}</div>
+      <div class="zone-status" style="background:${g.bg};color:${g.color}">
+        <span>${statusText}</span>
+        <span style="color:#6b7280;font-size:10px">${z.atelier}</span>
+      </div>
+      <div class="btn-row">
+        <button class="btn" onclick="openDetail('${z.id}')">Détail</button>
+        <button class="btn btn-primary" onclick="openAudit('${z.id}')">Auditer</button>
+      </div>
+    </div>`;
+  }).join("");
+
+  const roundDone=totalZones-pendingRound.size;
+  const roundPct=Math.round((roundDone/totalZones)*100);
+  const barLabels=ZONES.map(z=>z.id);
+  const barData=ZONES.map(z=>calcPct(zoneData[z.id]));
+  const barColors=ZONES.map(z=>{const p=calcPct(zoneData[z.id]);return zoneData[z.id]?getGrade(p).color:"#e5e7eb";});
+
+  const actionsHtml=ZONES.map(z=>{
+    const sc=zoneData[z.id];
+    const p=calcPct(sc);
+    const g=sc?getGrade(p):{label:"—",color:"#6b7280",bg:"#f3f4f6"};
+    const act=getActions(sc)[0];
+    return `<div class="at-row" onclick="openDetail('${z.id}')">
+      <div><b>${z.name}</b> <span style="color:#6b7280;font-size:11px;margin-left:4px">${z.team}</span></div>
+      <div style="color:${g.color};font-weight:600">${sc?p+"%":"—"}</div>
+      <div><span style="background:${g.bg};color:${g.color};border-radius:20px;padding:2px 9px;font-size:10px;font-weight:700">${g.label}</span></div>
+      <div style="color:#6b7280;font-size:12px">${act.msg}</div>
+    </div>`;
+  }).join("");
+
+  document.getElementById("app").innerHTML=`
+  <div>
+    <header class="header">
+      <div>
+        <div class="company-name">Figeac Aéro Tunisie</div>
+        <div class="company-tag">Système 6S Digital · Excellence Opérationnelle</div>
+      </div>
+      <div class="badge">Session Active : ${CURRENT_YEAR}</div>
+    </header>
+    <div class="body">
+      <div class="kpi-grid">
+        ${kpis.map((k,i)=>i===3?`<div class="kpi">
+          <div class="kpi-val" style="color:${k.color}">${k.val}</div>
+          <div class="kpi-lbl">${k.label}</div>
+          <div class="kpi-sub">${k.sub}</div>
+          <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${roundPct}%;background:#f59e0b"></div></div>
+        </div>`:
+        `<div class="kpi">
+          <div class="kpi-val" style="color:${k.color}">${k.val}</div>
+          <div class="kpi-lbl">${k.label}</div>
+          <div class="kpi-sub">${k.sub}</div>
+        </div>`).join("")}
+      </div>
+      <div style="background:white;border:1px solid #e5e7eb;border-radius:12px;padding:12px 16px;margin-bottom:18px;display:flex;justify-content:between;align-items:center">
+        <div style="font-size:12px;color:#6b7280">Cycle de rotation actuel : <b>${roundDone}/${totalZones} zones auditées</b></div>
+      </div>
+      <div class="sec">Zones de production</div>
+      <div class="zones-grid">${zonesHtml}</div>
+      <div class="charts-grid">
+        <div class="card"><div class="chart-title">Scores par zone</div><div style="height:190px"><canvas id="barChart"></canvas></div></div>
+        <div class="card"><div class="chart-title">Tendance globale</div><div style="height:190px"><canvas id="lineChart"></canvas></div></div>
+      </div>
+      <div class="sec">Plan d'actions automatisé</div>
+      <div class="actions-table">
+        <div class="at-head"><span>Zone</span><span>Score</span><span>Classe</span><span>Action Corrective Prioritaire</span></div>
+        ${actionsHtml}
+      </div>
+    </div>
+  </div>`;
+
+  setTimeout(()=>{
+    const barCtx=document.getElementById("barChart");
+    if(barCtx) globalBarChart=new Chart(barCtx,{
+      type:"bar",data:{labels:barLabels,datasets:[{data:barData,backgroundColor:barColors,borderRadius:6}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:100}}}
+    });
+    const lineCtx=document.getElementById("lineChart");
+    if(lineCtx){
+      const maxLen=Math.max(1,...ZONES.map(z=>zoneHistory[z.id].length));
+      const datasets=ZONES.map(z=>{
+        const hist=zoneHistory[z.id];if(!hist.length) return null;
+        return {label:z.id,data:hist.map(h=>h.pct),borderWidth:2,tension:.2};
+      }).filter(Boolean);
+      globalLineChart=new Chart(lineCtx,{
+        type:"line",data:{labels:Array.from({length:maxLen},(_,i)=>"Audit "+(i+1)),datasets:datasets},
+        options:{responsive:true,maintainAspectRatio:false}
+      });
+    }
+  },50);
+}
+
+function renderAudit(){
+  const zone=ZONES.find(z=>z.id===activeId);
+  const livePct=calcPct(auditScores);
+  const g=getGrade(livePct);
+
+  if(auditDone){
+    document.getElementById("app").innerHTML=`
+    <div class="audit-wrap">
+      <div class="success-screen">
+        <div style="font-size:48px;color:#22d3a0;margin-bottom:12px">✓</div>
+        <div style="font-size:18px;font-weight:700">Audit Enregistré avec Succès</div>
+        <div style="color:#6b7280;margin-top:6px">${zone.name} — Score : ${livePct}% (Classe ${g.label})</div>
+        <div style="color:#9ca3af;font-size:12px;margin-top:14px">Mise à jour en temps réel...</div>
+      </div>
+    </div>`;
+    return;
+  }
+
+  const cardsHtml=S6.map(s=>{
+    const v=auditScores[s.key]??0;
+    const col=v>=8?"#22d3a0":v>=5?"#f59e0b":"#ef4444";
+    const btns=[0,1,2,3,4,5,6,7,8,9,10].map(n=>{
+      const active=v===n;
+      return `<button class="score-btn" onclick="setScore('${s.key}',${n})"
+        style="${active?`background:${col};color:white;border-color:${col};transform:scale(1.1)`:""}">${n}</button>`;
+    }).join("");
+    return `<div class="s-card">
+      <div class="s-card-top">
+        <span style="font-size:20px">${s.icon}</span>
+        <div style="flex:1"><div class="s-label">${s.label}</div><div class="s-desc">${s.desc}</div></div>
+        <div class="s-score-val" style="color:${col}">${v}<span style="font-size:12px;color:#9ca3af">/10</span></div>
+      </div>
+      <div class="s-track"><div class="s-fill" style="width:${v*10}%;background:${col}"></div></div>
+      <div class="score-btns">${btns}</div>
+    </div>`;
+  }).join("");
+
+  document.getElementById("app").innerHTML=`
+  <div class="audit-wrap">
+    <div class="top-bar">
+      <button class="back-btn" onclick="goBack()">← Annuler</button>
+      <div style="text-align:center"><b>Saisie Audit : ${zone.name}</b></div>
+      <div class="live-pill" style="color:${g.color};border-color:${g.color}">${livePct}%</div>
+    </div>
+    ${cardsHtml}
+    <button class="submit-btn" onclick="submitAudit()" style="background:${g.color}">Enregistrer l'Audit (${livePct}%)</button>
+  </div>`;
+}
+
+function renderDetail(){
+  const zone=ZONES.find(z=>z.id===activeId);
+  const sc=zoneData[activeId];
+  const p=calcPct(sc);
+  const g=sc?getGrade(p):{label:"—",color:"#6b7280",bg:"#f3f4f6"};
+  const actions=getActions(sc);
+
+  const tilesHtml=S6.map(s=>{
+    const v=sc?(sc[s.key]||0):0;
+    const col=v>=8?"#22d3a0":v>=5?"#f59e0b":"#ef4444";
+    return `<div class="s6-tile" style="border-top-color:${sc?col:"#e5e7eb"}">
+      <div style="font-size:20px">${s.icon}</div>
+      <div style="font-size:11px;color:#6b7280">${s.label}</div>
+      <div style="font-size:20px;font-weight:700;color:${sc?col:"#6b7280"}">${sc?v:"—"}</div>
+    </div>`;
+  }).join("");
+
+  const actionsHtml=actions.map(a=>`
+    <div class="action-item" style="border-color:${a.color}">
+      <div style="display:flex;justify-content:between;font-size:11px;font-weight:700;color:${a.color}">
+        <span>${a.label}</span><span>${a.score}/10</span>
+      </div>
+      <div style="font-size:12px;color:#4b5563;margin-top:4px">${a.msg}</div>
+    </div>`).join("");
+
+  document.getElementById("app").innerHTML=`
+  <div class="detail-wrap">
+    <button class="back-btn" onclick="goBack()">← Table de bord</button>
+    <div class="hero-card" style="border-top-color:${g.color}">
+      <div>
+        <h2>${zone.name}</h2>
+        <p style="font-size:12px;color:#6b7280">${zone.team} · ${zone.atelier}</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        ${ringPath(p,g.color,76)}
+        <div style="font-size:22px;font-weight:700;color:${g.color}">Classe ${g.label}</div>
+      </div>
+    </div>
+    <div class="s6-grid">${tilesHtml}</div>
+    <div class="charts-grid" style="margin-top:16px;grid-template-columns:1fr">
+      <div class="card">
+        <div class="chart-title">Historique des scores - ${zone.name}</div>
+        <div style="height:180px"><canvas id="zoneDetailChart"></canvas></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <div class="chart-title">Actions requises</div>
+      <div>${actionsHtml}</div>
+    </div>
+  </div>`;
+
+  setTimeout(()=>{
+    const ctx=document.getElementById("zoneDetailChart");
+    if(!ctx) return;
+    const hist=zoneHistory[activeId]||[];
+    detailLineChart=new Chart(ctx,{
+      type:"line",
+      data:{
+        labels:hist.length?hist.map((_,i)=>"Audit "+(i+1)):["Aucun"],
+        datasets:[{
+          data:hist.length?hist.map(h=>h.pct):[null],
+          borderColor:g.color,backgroundColor:"transparent",borderWidth:2,
+          pointRadius:4,pointBackgroundColor:g.color,tension:.3,label:"Score"}]
+      },
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{x:{ticks:{color:"#888",font:{size:10}},grid:{display:false}},
+          y:{min:0,max:100,ticks:{color:"#888",font:{size:10}},grid:{color:"rgba(128,128,128,.1)"}}}}
+    });
+  },50);
+}
+
+// --- LOGIC DE NAVIGATION ULTRA-RAPIDE (SANS RECHARGEMENT) ---
+function openAudit(id){
+  // 1. Inbaddlu el URL l-fo9ani sans recharger la page!
+  const newUrl = window.location.pathname + "?zone=" + id;
+  window.history.pushState({ path: newUrl }, '', newUrl);
+
+  // 2. Inbaddlu el view instantanément
+  activeId = id;
+  const existing = zoneData[id];
+  auditScores = existing ? {...existing} : {};
+  S6.forEach(s => { if(auditScores[s.key] === undefined) auditScores[s.key] = 0; });
+  auditDone = false;
+  view = "audit";
+  renderAudit();
+}
+
+function openDetail(id){
+  activeId = id;
+  view = "detail";
+  renderDetail();
+}
+
+function goBack(){
+  // Na77o el parameter mel URL l-fo9ani smoothly
+  window.history.pushState({ path: window.location.pathname }, '', window.location.pathname);
+  view = "dash";
+  renderDash();
+}
+
+function setScore(key,val){
+  auditScores[key] = val;
+  renderAudit();
+}
+
+function submitAudit(){
+  const pct = calcPct(auditScores);
+  zoneData[activeId] = {...auditScores};
+  zoneHistory[activeId].push({pct, date:Date.now(), year:CURRENT_YEAR});
+  zoneAuditedYear[activeId] = CURRENT_YEAR;
+  pendingRound.delete(activeId);
+
+  if(pendingRound.size === 0){
+    annualCycles++;
+    pendingRound = new Set(ZONES.map(z=>z.id));
+  }
+
+  // ENREGISTREMENT SECURISE SUR FIREBASE
+  db.ref('6s_dashboard_central').set({
+    zoneData: zoneData,
+    zoneHistory: zoneHistory,
+    annualCycles: annualCycles,
+    zoneAuditedYear: zoneAuditedYear,
+    pendingRoundList: Array.from(pendingRound)
+  }).then(() => {
+    auditDone = true;
+    renderAudit();
+    
+    // Tarja3 lil dashboard wa7dha ba3d 1.2 sanya barka smoothly
+    setTimeout(() => {
+      window.history.pushState({ path: window.location.pathname }, '', window.location.pathname);
+      view = "dash";
+      auditDone = false;
+      renderDash();
+    }, 1200);
+  }).catch((error) => {
+    alert("Erreur Firebase: " + error.message);
+  });
+}
+
+// Support mta3 bouton "Retour" mta3 el Navigateur/Tél zeda bch maydhia9ch el code
+window.onpopstate = function() {
+  const params = new URLSearchParams(window.location.search);
+  const z = params.get('zone');
+  if (z && ZONES.some(zone => zone.id === z)) {
+    activeId = z;
+    view = "audit";
+  } else {
+    view = "dash";
+  }
+  renderCurrentView();
+};
+</script>
+</body>
+</html>
